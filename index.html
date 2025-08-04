@@ -324,10 +324,7 @@
       #restartButton { padding: 10px 20px; font-size: 14px; margin-top: 20px; }
       #startScreen h2 { font-size: 2.5rem; }
       #startButton { padding: 15px 30px; font-size: 20px; }
-      #btnEvet {
-        position: static !important;
-        transform: none !important;
-      }
+      /* Mobil için kaçan butonu sabitleyen kuralı kaldırdım */
     }
   </style>
 </head>
@@ -350,10 +347,10 @@
     <svg id="heart-svg" viewBox="0 0 24 24">
       <path id="heart-path" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
     </svg>
-    <div id="finalText" class="neon-text">Asel in şarkısı !</div>
+    <div id="finalText" class="neon-text">Asel Senin İçin Şarkı Söylüyor!</div>
     
     <div id="musicBox">
-      <span id="currentSongName">🎵 Asel'den Şarkı - Şarkı Adı</span>
+      <span id="currentSongName">🎵 Asel'in Şarkısı! - Şarkı Adı</span>
       <audio id="audioPlayer" controls>
         <source src="asel_sarki1.mp3" type="audio/mpeg">
         Tarayıcınız desteklemiyor.
@@ -407,8 +404,8 @@
     const finalSound = new Audio('asel_final_sound.mp3');
 
     const songList = [
-      { name: "ERA7CAPONE - DURULDUM l PROD BY. KERO (Official Music Video)", src: "asel.mp4" },
-      
+      { name: "ERA7CAPONE - DURULDUM ", src: "asel.mp4" },
+     
     ];
     let currentSongIndex = 0;
 
@@ -507,21 +504,20 @@
         }, 100);
     }
 
-    if (window.innerWidth > 600) {
-        btnEvet.addEventListener("mouseover", () => {
-            if (!evasionInterval) {
-                evasionInterval = setInterval(evadeMouse, 15);
-            }
-        });
+    // Mobil ve masaüstü için fare kaçırma özelliği
+    btnEvet.addEventListener("mouseover", () => {
+        if (!evasionInterval) {
+            evasionInterval = setInterval(evadeMouse, 15);
+        }
+    });
 
-        btnEvet.addEventListener("mouseout", () => {
-            if (evasionInterval) {
-                clearInterval(evasionInterval);
-                evasionInterval = null;
-                btnEvet.style.opacity = '1';
-            }
-        });
-    }
+    btnEvet.addEventListener("mouseout", () => {
+        if (evasionInterval) {
+            clearInterval(evasionInterval);
+            evasionInterval = null;
+            btnEvet.style.opacity = '1';
+        }
+    });
 
     btnHayir.addEventListener("touchstart", (e) => {
         e.preventDefault();
@@ -529,18 +525,12 @@
     });
 
     btnEvet.addEventListener("touchstart", (e) => {
-        if (window.innerWidth <= 600) {
-            e.preventDefault();
-            return;
-        }
         e.preventDefault();
-        btnEvet.click();
+        // Mobilde de kaçma özelliği aktif olacağı için bu koşul kaldırıldı.
+        // Tıklama olayının normal şekilde çalışması sağlanıyor.
     });
 
     btnEvet.addEventListener("click", () => {
-        if (window.innerWidth <= 600) {
-            return;
-        }
         evetSound.play();
         evetClickCount++;
         showMessage(`Asel bu şarkıyı söylemek istemiyor! 😉 (Deneme: ${evetClickCount})`);
