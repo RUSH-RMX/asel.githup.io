@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Asel'den Şarkılar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Rubik', sans-serif;
+      height: 100vh;
+      background: linear-gradient(-45deg, #010411, #001f4c, #010411, #003366);
+      background-size: 400% 400%;
+      animation: gradientMove 15s ease infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      overflow: hidden;
+      color: #fff; /* Neon metin için varsayılan renk */
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Neon yazı stili */
+    .neon-text {
+        color: #fff;
+        text-shadow:
+            0 0 7px #fff,
+            0 0 10px #fff,
+            0 0 21px #fff,
+            0 0 42px #0ff,
+            0 0 82px #0ff,
+            0 0 92px #0ff,
+            0 0 102px #0ff,
+            0 0 151px #0ff;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-align: center;
+      opacity: 0;
+      animation: fadeInFromTop 1s ease-out forwards 0.5s;
+      z-index: 10;
+    }
+    @keyframes fadeInFromTop {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .button-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeIn 1s ease-out forwards 0.8s;
+      z-index: 10;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .btn {
+      padding: 16px 32px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.1s ease-out;
+      position: relative;
+      z-index: 10;
+    }
+    #btnHayir {
+      background-color: #10b981;
+      color: white;
+    }
+    #btnEvet {
+      background-color: #ef4444;
+      color: white;
+      transition: left 0.1s ease-out, top 0.1s ease-out, transform 0.1s ease-out, opacity 0.1s ease-out;
+    }
+    .btn:active {
+      transform: scale(0.95) !important;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #111827;
+      font-weight: bold;
+      min-height: 30px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      z-index: 10;
+    }
+    #hayirSayaci {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #374151;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    #finalScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      animation: fadeInFinal 1s ease forwards;
+      z-index: 10;
+    }
+    @keyframes fadeInFinal {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #finalText {
+      font-size: 2.8rem;
+      margin-bottom: 30px;
+      animation: pulseText 3s infinite;
+      transition: color 0.5s, text-shadow 0.5s;
+      z-index: 10;
+    }
+    @keyframes pulseText {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    #heart-svg {
+      width: 160px;
+      height: 160px;
+      margin-bottom: 30px;
+      overflow: visible;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+      transition: filter 0.5s;
+      z-index: 10;
+    }
+
+    #heart-path {
+      fill: none;
+      stroke: #0ff; /* Kalp rengi mavi */
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: heartDraw 8s ease-in-out forwards;
+      animation-delay: 0.5s;
+      transition: stroke 0.5s, fill 0.5s;
+      d: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+    }
+
+    @keyframes heartDraw {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    #heart-path.pulsing {
+      animation: heartPulse 1.5s infinite;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    #musicBox {
+      background: rgba(0, 191, 255, 0.3);
+      border-radius: 20px;
+      padding: 20px;
+      color: white;
+      font-weight: bold;
+      width: 280px;
+      box-shadow: 0 0 30px rgba(0, 191, 255, 0.5);
+      animation: floatMusic 3s ease-in-out infinite;
+      transition: background 0.5s;
+      z-index: 10;
+    }
+    @keyframes floatMusic {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    audio {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+
+    .music-controls {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .music-btn {
+        background-color: #6d28d9;
+        color: white;
+        padding: 8px 15px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .music-btn:hover {
+        background-color: #7c3aed;
+        transform: scale(1.05);
+    }
+
+    .music-btn:active {
+        transform: scale(0.95);
+    }
+
+    #restartButton {
+        margin-top: 30px;
+        background-color: #3b82f6;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+    #restartButton:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+    }
+    #restartButton:active {
+      transform: scale(0.95);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #startScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(-45deg, #010411, #001f4c, #010411, #003366);
+        background-size: 400% 400%;
+        animation: gradientMove 15s ease infinite;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        color: #fff;
+        text-align: center;
+        transition: opacity 0.5s ease-out;
+    }
+
+    #startScreen h2 {
+        font-size: 3.5rem;
+        margin-bottom: 25px;
+        text-shadow:
+            0 0 7px #fff,
+            0 0 10px #fff,
+            0 0 21px #fff,
+            0 0 42px #0ff,
+            0 0 82px #0ff,
+            0 0 92px #0ff,
+            0 0 102px #0ff,
+            0 0 151px #0ff;
+    }
+
+    #startButton {
+        background-color: #4CAF50;
+        color: white;
+        padding: 18px 40px;
+        font-size: 24px;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+
+    #startButton:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    #startButton:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; margin-bottom: 30px; }
+      .button-container { flex-direction: column; gap: 15px; margin-bottom: 20px; }
+      .btn { padding: 14px 28px; font-size: 16px; }
+      #finalText { font-size: 2rem; margin-bottom: 20px; }
+      #musicBox { width: 240px; padding: 15px; }
+      #heart-svg { width: 160px; height: 160px; margin-bottom: 20px; }
+      #restartButton { padding: 10px 20px; font-size: 14px; margin-top: 20px; }
+      #startScreen h2 { font-size: 2.5rem; }
+      #startButton { padding: 15px 30px; font-size: 20px; }
+      #btnEvet {
+        position: static !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="startScreen">
+    <h2 class="neon-text">Asel Şarkı Söylesin!</h2>
+    <button id="startButton">Başla</button>
+  </div>
+
+  <h1 id="question" class="neon-text hidden">Asel'in Şarkı Söylemesini İster Misin?</h1>
+  <div class="button-container hidden">
+    <button class="btn" id="btnEvet">Hayır</button>
+    <button class="btn" id="btnHayir">Evet</button>
+  </div>
+  <div id="message" class="hidden"></div>
+  <div id="hayirSayaci" class="hidden">Evet Sayısı: 0</div>
+
+  <div id="finalScreen">
+    <svg id="heart-svg" viewBox="0 0 24 24">
+      <path id="heart-path" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <div id="finalText" class="neon-text">Asel in şarkısı !</div>
+    
+    <div id="musicBox">
+      <span id="currentSongName">🎵 Asel'den Şarkı - Şarkı Adı</span>
+      <audio id="audioPlayer" controls>
+        <source src="asel_sarki1.mp3" type="audio/mpeg">
+        Tarayıcınız desteklemiyor.
+      </audio>
+      <div class="music-controls">
+        <button id="prevSongBtn" class="music-btn">Önceki Şarkı</button>
+        <button id="nextSongBtn" class="music-btn">Sonraki Şarkı</button>
+      </div>
+    </div>
+    <button id="restartButton">Yeniden Başla</button>
+  </div>
+
+  <script>
+    const btnHayir = document.getElementById("btnHayir");
+    const btnEvet = document.getElementById("btnEvet");
+    const question = document.getElementById("question");
+    const message = document.getElementById("message");
+    const finalScreen = document.getElementById("finalScreen");
+    const audioPlayer = document.getElementById("audioPlayer");
+    const body = document.body;
+    const finalText = document.getElementById("finalText");
+    const heartSvg = document.getElementById("heart-svg");
+    const heartPath = document.getElementById("heart-path");
+    const musicBox = document.getElementById("musicBox");
+    const hayirSayaci = document.getElementById("hayirSayaci");
+    const restartButton = document.getElementById("restartButton");
+    const startScreen = document.getElementById("startScreen");
+    const startButton = document.getElementById("startButton");
+    const currentSongName = document.getElementById("currentSongName");
+    const prevSongBtn = document.getElementById("prevSongBtn");
+    const nextSongBtn = document.getElementById("nextSongBtn");
+    const gameElements = [question, document.querySelector('.button-container'), message, hayirSayaci];
+
+    let clickCount = 0;
+    let evetClickCount = 0;
+    let evasionInterval;
+    let evetHideTimeout;
+
+    const hayirMesajlari = [
+      "Asel çok mutlu oldu!",
+      "Şarkılar hazırlanıyor...",
+      "Evet demeye devam et! 😉",
+      "Asel'in sesini duymak için sabırsızlanıyor musun?",
+      "Harika gidiyoruz!",
+      "Daha fazla 'Evet' de!",
+      "Çok az kaldı!"
+    ];
+
+    const hayirSound = new Audio('asel_onay_sound.mp3');
+    const evetSound = new Audio('asel_red_sound.mp3');
+    const finalSound = new Audio('asel_final_sound.mp3');
+
+    const songList = [
+      { name: "ERA7CAPONE - DURULDUM l PROD BY. KERO (Official Music Video)", src: "asel.mp4" },
+      
+    ];
+    let currentSongIndex = 0;
+
+    function loadAndPlaySong(index) {
+        if (songList.length === 0) {
+            console.warn("Şarkı listesi boş!");
+            currentSongName.textContent = "Hiç şarkı yok!";
+            return;
+        }
+        currentSongIndex = (index + songList.length) % songList.length; 
+        const song = songList[currentSongIndex];
+        audioPlayer.src = song.src;
+        currentSongName.textContent = song.name;
+        audioPlayer.load();
+    }
+
+    audioPlayer.addEventListener('ended', () => {
+        loadAndPlaySong(currentSongIndex + 1);
+        audioPlayer.play();
+    });
+
+    nextSongBtn.addEventListener('click', () => {
+        audioPlayer.pause();
+        loadAndPlaySong(currentSongIndex + 1);
+        audioPlayer.play();
+    });
+
+    prevSongBtn.addEventListener('click', () => {
+        audioPlayer.pause();
+        loadAndPlaySong(currentSongIndex - 1);
+        audioPlayer.play();
+    });
+
+    function getRandomRedOrPurple() {
+      const colors = ['#ef4444', '#dc2626', '#b91c1c', '#991b1b', '#881337', '#9f1239', '#be123c', '#e11d48', '#f0abfc', '#d8b4fe', '#c084fc', '#a855f7', '#9333ea', '#8b5cf6', '#7e22ce', '#6b21a8'];
+      return colors [Math.floor(Math.random() * colors.length)];
+    }
+
+    function showMessage(msg) {
+        message.textContent = msg;
+        message.style.opacity = 1;
+        setTimeout(() => {
+            message.style.opacity = 0;
+        }, 1500);
+    }
+
+    function resetGame() {
+        clickCount = 0;
+        evetClickCount = 0;
+        gameElements.forEach(el => el.classList.add('hidden'));
+        finalScreen.style.display = 'none';
+        startScreen.classList.remove('hidden');
+        hayirSayaci.textContent = `Evet Sayısı: 0`;
+        message.textContent = "";
+        btnEvet.style.position = 'static';
+        btnEvet.style.left = 'auto';
+        btnEvet.style.top = 'auto';
+        btnEvet.style.transform = 'scale(1)';
+        btnEvet.classList.remove('hidden');
+        heartPath.classList.remove('pulsing');
+        heartPath.style.fill = 'none';
+        heartPath.style.animation = 'none';
+        heartPath.offsetHeight;
+        heartPath.style.animation = 'heartDraw 8s ease-in-out forwards 0.5s';
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        finalSound.pause();
+        finalSound.currentTime = 0;
+        loadAndPlaySong(0);
+        body.style.background = 'linear-gradient(-45deg, #010411, #001f4c, #010411, #003366)';
+        body.style.backgroundSize = '400% 400%';
+        body.style.animation = 'gradientMove 15s ease infinite';
+        
+        if (evasionInterval) {
+            clearInterval(evasionInterval);
+            evasionInterval = null;
+        }
+        if (evetHideTimeout) {
+            clearTimeout(evetHideTimeout);
+            evetHideTimeout = null;
+        }
+    }
+
+    function evadeMouse() {
+        const btnRect = btnEvet.getBoundingClientRect();
+        let newX = Math.random() * (window.innerWidth - btnRect.width * 1.5) + (btnRect.width * 0.25);
+        let newY = Math.random() * (window.innerHeight - btnRect.height * 1.5) + (btnRect.height * 0.25);
+        newX = Math.max(10, Math.min(window.innerWidth - btnRect.width - 10, newX));
+        newY = Math.max(10, Math.min(window.innerHeight - btnRect.height - 10, newY));
+        btnEvet.style.position = 'absolute';
+        btnEvet.style.left = `${newX}px`;
+        btnEvet.style.top = `${newY}px`;
+        btnEvet.style.opacity = '0.4';
+        setTimeout(() => {
+            btnEvet.style.opacity = '1';
+        }, 100);
+    }
+
+    if (window.innerWidth > 600) {
+        btnEvet.addEventListener("mouseover", () => {
+            if (!evasionInterval) {
+                evasionInterval = setInterval(evadeMouse, 15);
+            }
+        });
+
+        btnEvet.addEventListener("mouseout", () => {
+            if (evasionInterval) {
+                clearInterval(evasionInterval);
+                evasionInterval = null;
+                btnEvet.style.opacity = '1';
+            }
+        });
+    }
+
+    btnHayir.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        btnHayir.click();
+    });
+
+    btnEvet.addEventListener("touchstart", (e) => {
+        if (window.innerWidth <= 600) {
+            e.preventDefault();
+            return;
+        }
+        e.preventDefault();
+        btnEvet.click();
+    });
+
+    btnEvet.addEventListener("click", () => {
+        if (window.innerWidth <= 600) {
+            return;
+        }
+        evetSound.play();
+        evetClickCount++;
+        showMessage(`Asel bu şarkıyı söylemek istemiyor! 😉 (Deneme: ${evetClickCount})`);
+        btnEvet.style.transform = `scale(${Math.max(0.3, 1 - evetClickCount * 0.05)})`;
+    });
+
+    restartButton.addEventListener("click", resetGame);
+
+    startButton.addEventListener("click", () => {
+        startScreen.classList.add('hidden');
+        gameElements.forEach(el => el.classList.remove('hidden'));
+        loadAndPlaySong(currentSongIndex);
+        evetHideTimeout = setTimeout(() => {
+            btnEvet.classList.add('hidden');
+        }, 5000);
+    });
+
+    btnHayir.addEventListener("click", () => {
+      hayirSound.play();
+      const randomMsg = hayirMesajlari [Math.floor(Math.random() * hayirMesajlari.length)];
+      showMessage(randomMsg);
+      clickCount++;
+      hayirSayaci.textContent = `Evet Sayısı: ${clickCount}`;
+
+      if (clickCount >= 3) {
+        gameElements.forEach(el => el.classList.add('hidden'));
+        finalScreen.style.display = 'flex';
+
+        // Kalp için sabit neon mavi renk
+        const heartColor = '#0ff';
+        heartPath.style.stroke = heartColor;
+        setTimeout(() => {
+            heartPath.style.fill = heartColor;
+            heartPath.classList.add('pulsing');
+        }, 8500);
+
+        // Final ekranı metin rengi sabit neon mavi
+        finalText.style.color = '#0ff';
+        finalText.style.textShadow = `0 0 15px #0ff`;
+        
+        heartSvg.style.filter = `drop-shadow(0 0 15px ${heartColor})`;
+        audioPlayer.play();
+
+        if (evetHideTimeout) {
+            clearTimeout(evetHideTimeout);
+            evetHideTimeout = null;
+        }
+        btnEvet.classList.add('hidden');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAndPlaySong(0);
+    });
+  </script>
+</body>
+</html>
