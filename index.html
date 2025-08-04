@@ -324,7 +324,6 @@
       #restartButton { padding: 10px 20px; font-size: 14px; margin-top: 20px; }
       #startScreen h2 { font-size: 2.5rem; }
       #startButton { padding: 15px 30px; font-size: 20px; }
-      /* Mobil için kaçan butonu sabitleyen kuralı kaldırdım */
     }
   </style>
 </head>
@@ -405,7 +404,10 @@
 
     const songList = [
       { name: "ERA7CAPONE - DURULDUM ", src: "asel.mp4" },
-      
+      { name: "Asel'in Favorisi - Şarkı 2", src: "asel_sarki2.mp4" },
+      { name: "Asel'den Enerjik - Şarkı 3", src: "asel_sarki3.mp4" },
+      { name: "Asel'den Özel İstek - Şarkı 4", src: "asel_sarki4.mp3" },
+      { name: "Asel'den Süpriz - Şarkı 5", src: "asel_sarki5.mp3" },
     ];
     let currentSongIndex = 0;
 
@@ -438,11 +440,6 @@
         loadAndPlaySong(currentSongIndex - 1);
         audioPlayer.play();
     });
-
-    function getRandomRedOrPurple() {
-      const colors = ['#ef4444', '#dc2626', '#b91c1c', '#991b1b', '#881337', '#9f1239', '#be123c', '#e11d48', '#f0abfc', '#d8b4fe', '#c084fc', '#a855f7', '#9333ea', '#8b5cf6', '#7e22ce', '#6b21a8'];
-      return colors [Math.floor(Math.random() * colors.length)];
-    }
 
     function showMessage(msg) {
         message.textContent = msg;
@@ -504,7 +501,22 @@
         }, 100);
     }
 
-    // Mobil ve masaüstü için fare kaçırma özelliği
+    function evadeTouch() {
+        const btnRect = btnEvet.getBoundingClientRect();
+        const maxMove = Math.min(window.innerWidth, window.innerHeight) * 0.15; // Ekran boyutuna göre küçük bir hareket
+        let newX = btnRect.x + (Math.random() - 0.5) * maxMove;
+        let newY = btnRect.y + (Math.random() - 0.5) * maxMove;
+        
+        // Ekran sınırları içinde kalmasını sağla
+        newX = Math.max(10, Math.min(window.innerWidth - btnRect.width - 10, newX));
+        newY = Math.max(10, Math.min(window.innerHeight - btnRect.height - 10, newY));
+
+        btnEvet.style.position = 'absolute';
+        btnEvet.style.left = `${newX}px`;
+        btnEvet.style.top = `${newY}px`;
+    }
+    
+    // Masaüstü için fareyle kaçma mantığı
     btnEvet.addEventListener("mouseover", () => {
         if (!evasionInterval) {
             evasionInterval = setInterval(evadeMouse, 15);
@@ -519,18 +531,23 @@
         }
     });
 
+    // Mobil için dokunmatik ile kaçma mantığı
+    btnEvet.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        evadeTouch();
+        evetSound.play();
+        evetClickCount++;
+        showMessage(`Asel bu şarkıyı söylemek istemiyor! 😉 (Deneme: ${evetClickCount})`);
+        btnEvet.style.transform = `scale(${Math.max(0.3, 1 - evetClickCount * 0.05)})`;
+    });
+
     btnHayir.addEventListener("touchstart", (e) => {
         e.preventDefault();
         btnHayir.click();
     });
 
-    btnEvet.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        // Mobilde de kaçma özelliği aktif olacağı için bu koşul kaldırıldı.
-        // Tıklama olayının normal şekilde çalışması sağlanıyor.
-    });
-
     btnEvet.addEventListener("click", () => {
+        // Dokunmatik olaylarda click'in tetiklenmesini engellediğimiz için bu sadece fare tıklamaları için çalışacak.
         evetSound.play();
         evetClickCount++;
         showMessage(`Asel bu şarkıyı söylemek istemiyor! 😉 (Deneme: ${evetClickCount})`);
